@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Layout Builder</title>
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .partition {
+        position: absolute;
+        background-color: #3498db; 
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .partition.vertical {
+        width: 50%;
+        height: 100%;
+        left: 0;
+    }
+
+    .partition.horizontal {
+        width: 100%;
+        height: 50%;
+        top: 0;
+    }
+
+    .btn-container {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .btn {
+        padding: 5px 10px;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+    .remove-btn {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    .resize-handle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #000;
+        cursor: se-resize;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="partition" id="initial-partition">
+        <div class="btn-container">
+            <button class="btn" onclick="split('V')">V</button>
+            <button class="btn" onclick="split('H')">H</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function split(orientation) {
+        const initialPartition = document.getElementById('initial-partition');
+        const newPartition = document.createElement('div');
+        newPartition.classList.add('partition');
+
+        if (orientation === 'V') {
+            newPartition.classList.add('vertical');
+            initialPartition.classList.add('vertical');
+            initialPartition.style.width = '50%';
+            newPartition.style.left = '50%';
+        } else {
+            newPartition.classList.add('horizontal');
+            initialPartition.classList.add('horizontal');
+            initialPartition.style.height = '50%';
+            newPartition.style.top = '50%';
+        }
+
+        const randomColor = getRandomColor();
+        initialPartition.style.backgroundColor = randomColor;
+        newPartition.style.backgroundColor = getRandomColor();
+        
+        initialPartition.appendChild(newPartition);
+        
+        const removeButton = document.createElement('div');
+        removeButton.classList.add('remove-btn');
+        removeButton.innerHTML = '-';
+        removeButton.onclick = function() {
+            initialPartition.removeChild(newPartition);
+        };
+        newPartition.appendChild(removeButton);
+
+        // Enable resizing
+        enableResize(initialPartition);
+        enableResize(newPartition);
+    }
+
+    function enableResize(partition) {
+        const handle = document.createElement('div');
+        handle.classList.add('resize-handle');
+        partition.appendChild(handle);
+
+        handle.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            const partitionRect = partition.getBoundingClientRect();
+            const startX = e.clientX;
+            const startY = e.clientY;
+            const partitionWidth = partitionRect.width;
+            const partitionHeight = partitionRect.height;
+
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+
+            function resize(e) {
+                if (partition.classList.contains('vertical')) {
+                    const newWidth = partitionWidth + e.clientX - startX;
+                    partition.style.width = newWidth + 'px';
+                } else {
+                    const newHeight = partitionHeight + e.clientY - startY;
+                    partition.style.height = newHeight + 'px';
+                }
+            }
+
+            function stopResize() {
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            }
+        });
+    }
+
+    function getRandomColor() {
+        return '#' + Math.floor(Math.random()*16777215).toString(16);
+    }
+</script>
+
+</body>
+</html>

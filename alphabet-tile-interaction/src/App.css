@@ -1,0 +1,31 @@
+.App {
+  text-align: center;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(6, 100px); /* Adjust the number and size of columns as needed */
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  background-color: #ddd;
+  border: 1px solid #aaa;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tile:hover {
+  background-color: #ccc;
+}
+
+#outputString {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
